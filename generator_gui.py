@@ -33,7 +33,10 @@ def generate_booth(num_layouts, num_booths, booth_width, booth_height, padding, 
 
         while booth_count < num_booths and grid_positions:
             start_x, start_y = grid_positions.pop()
-            group_size = random.randint(2, min(4, num_booths - booth_count))
+            max_group_size = min(4, num_booths - booth_count)
+            if max_group_size < 2:
+                break
+            group_size = random.randint(2, max_group_size)
             rows = 1
             cols = group_size
             if start_x + cols * (booth_width + padding) > grid_size or start_y + rows * (booth_height + padding) > grid_size:
@@ -54,19 +57,19 @@ def generate_booth(num_layouts, num_booths, booth_width, booth_height, padding, 
     layout_num = 0
     while layout_num < num_layouts:
         valid = False
-        for _ in range(9999999):  # Try up to 100 times to create a valid layout
+        for _ in range(100):
             valid, ax = create_layout()
             if valid:
                 break
         if valid:
             ax.set_xlim(0, grid_size)
-            ax.set_ylim(0, grid_size)
+            ax.set_ylim(0, grid_size + 10)
             ax.axis('off')
-            plt.savefig(os.path.join(save_path, f'data{225 + layout_num}_{num_booths}.png'))
+            plt.savefig(os.path.join(save_path, f'data{layout_num}_{num_booths}.png'))
             plt.close()
             layout_num += 1
         else:
-            print(f"Failed to create a valid layout for layout number {layout_num + 1}")
+            print(f"레이아웃 생성 실패 {layout_num + 1}")
 
 def select_save_path():
     selected_path = filedialog.askdirectory()
@@ -83,48 +86,43 @@ def run_generator():
     save_path = entry_save_path.get()
     generate_booth(num_layouts, num_booths, booth_width, booth_height, padding, save_path)
 
-# Create the main window
 root = tk.Tk()
-root.title("Booth Image Generator")
+root.title("부스 시뮬레이터")
 
-# Create and place labels and entry fields
 label_font = ('Arial', 12)
 
-ttk.Label(root, text="Number of Layouts:", font=label_font).grid(row=0, column=0, padx=10, pady=5, sticky='E')
+ttk.Label(root, text="생성할 이미지 수:", font=label_font).grid(row=0, column=0, padx=10, pady=5, sticky='E')
 entry_num_layouts = ttk.Entry(root)
 entry_num_layouts.grid(row=0, column=1, padx=10, pady=5, sticky='EW')
 
-ttk.Label(root, text="Number of Booths:", font=label_font).grid(row=1, column=0, padx=10, pady=5, sticky='E')
+ttk.Label(root, text="부스 수:", font=label_font).grid(row=1, column=0, padx=10, pady=5, sticky='E')
 entry_num_booths = ttk.Entry(root)
 entry_num_booths.grid(row=1, column=1, padx=10, pady=5, sticky='EW')
 
-ttk.Label(root, text="Booth Width:", font=label_font).grid(row=2, column=0, padx=10, pady=5, sticky='E')
+ttk.Label(root, text="각 부스의 가로 크기:", font=label_font).grid(row=2, column=0, padx=10, pady=5, sticky='E')
 entry_booth_width = ttk.Entry(root)
 entry_booth_width.grid(row=2, column=1, padx=10, pady=5, sticky='EW')
 
-ttk.Label(root, text="Booth Height:", font=label_font).grid(row=3, column=0, padx=10, pady=5, sticky='E')
+ttk.Label(root, text="각 부스의 세로 크기:", font=label_font).grid(row=3, column=0, padx=10, pady=5, sticky='E')
 entry_booth_height = ttk.Entry(root)
 entry_booth_height.grid(row=3, column=1, padx=10, pady=5, sticky='EW')
 
-ttk.Label(root, text="Padding:", font=label_font).grid(row=4, column=0, padx=10, pady=5, sticky='E')
+ttk.Label(root, text="부스 간 간격:", font=label_font).grid(row=4, column=0, padx=10, pady=5, sticky='E')
 entry_padding = ttk.Entry(root)
 entry_padding.grid(row=4, column=1, padx=10, pady=5, sticky='EW')
 
-ttk.Label(root, text="Save Path:", font=label_font).grid(row=5, column=0, padx=10, pady=5, sticky='E')
+ttk.Label(root, text="이미지 저장 경로:", font=label_font).grid(row=5, column=0, padx=10, pady=5, sticky='E')
 frame_save_path = ttk.Frame(root)
 frame_save_path.grid(row=5, column=1, padx=10, pady=5, sticky='EW')
 entry_save_path = ttk.Entry(frame_save_path)
 entry_save_path.grid(row=0, column=0, sticky='EW')
-btn_browse = ttk.Button(frame_save_path, text="Browse", command=select_save_path)
+btn_browse = ttk.Button(frame_save_path, text="찾아보기...", command=select_save_path)
 btn_browse.grid(row=0, column=1, padx=5)
 
-# Create and place the generate button
-btn_generate = ttk.Button(root, text="Generate Images", command=run_generator)
+btn_generate = ttk.Button(root, text="생성하기", command=run_generator)
 btn_generate.grid(row=6, columnspan=2, pady=10)
 
-# Make the GUI responsive
 root.columnconfigure(1, weight=1)
 frame_save_path.columnconfigure(0, weight=1)
 
-# Start the GUI event loop
 root.mainloop()
