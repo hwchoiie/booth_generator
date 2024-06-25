@@ -4,7 +4,10 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import random
 import os
-from PIL import Image, ImageTk
+from threading import Thread
+import matplotlib
+
+matplotlib.use('Agg')
 
 def generate_booth(num_layouts, num_booths, booth_width, booth_height, padding, save_path):
     grid_size = 100
@@ -85,17 +88,18 @@ def run_generator():
     booth_height = int(entry_booth_height.get())
     padding = int(entry_padding.get())
     save_path = entry_save_path.get()
-    generate_booth(num_layouts, num_booths, booth_width, booth_height, padding, save_path)
+    btn_generate.config(state=tk.DISABLED, text="생성 중...")
+    def task():
+        generate_booth(num_layouts, num_booths, booth_width, booth_height, padding, save_path)
+        root.after(0, lambda: btn_generate.config(state=tk.NORMAL, text="생성하기"))
+    Thread(target=task).start()
 
 root = tk.Tk()
 root.title("부스 시뮬레이터")
 
 # Add favicon
-favicon_path = "C:/Users/User/Documents/rawdata/resources/turkey.ico"
+favicon_path = "./resources/turkey.ico"
 root.iconbitmap(favicon_path)
-# favicon = ImageTk.PhotoImage(Image.open(favicon_path))
-# root.iconphoto(False, favicon)
-# root.iconbitmap(False, favicon)
 
 label_font = ('Malgun Gothic', 12)
 
