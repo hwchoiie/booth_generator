@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import random
 import os
+from PIL import Image, ImageTk
 
 def generate_booth(num_layouts, num_booths, booth_width, booth_height, padding, save_path):
     grid_size = 100
@@ -89,7 +90,14 @@ def run_generator():
 root = tk.Tk()
 root.title("부스 시뮬레이터")
 
-label_font = ('Arial', 12)
+# Add favicon
+favicon_path = "C:/Users/User/Documents/rawdata/resources/turkey.ico"
+root.iconbitmap(favicon_path)
+# favicon = ImageTk.PhotoImage(Image.open(favicon_path))
+# root.iconphoto(False, favicon)
+# root.iconbitmap(False, favicon)
+
+label_font = ('Malgun Gothic', 12)
 
 ttk.Label(root, text="생성할 이미지 수:", font=label_font).grid(row=0, column=0, padx=10, pady=5, sticky='E')
 entry_num_layouts = ttk.Entry(root)
