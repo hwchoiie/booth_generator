@@ -97,9 +97,9 @@ def run_generator():
 root = tk.Tk()
 root.title("부스 시뮬레이터")
 
-# Add favicon
-favicon_path = "turkey.ico"
-root.iconbitmap(favicon_path)
+# # Add favicon
+# favicon_path = "turkey.ico"
+# root.iconbitmap(favicon_path)
 
 label_font = ('Malgun Gothic', 12)
 
